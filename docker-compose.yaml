@@ -1,0 +1,22 @@
+services:
+    app:
+        image: node:20-alpine
+        restart: always
+        working_dir: /usr/app/puzzle_games
+        volumes:
+            - ./:/usr/app/puzzle_games
+        ports:
+            - 3000:3000
+        command: sh -c "npm install && npm run start:prod"
+
+    mariadb:
+        image: mariadb:latest
+        restart: always
+        ports:
+            - "3306:3306"
+        environment:
+            - MYSQL_ROOT_PASSWORD
+            - MYSQL_USER
+            - MYSQL_PASSWORD
+        volumes:
+            - ./mysql-dump:/docker-entrypoint-initdb.d/
