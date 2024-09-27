@@ -1,33 +1,24 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Index,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('users')
 export class UsersEntity {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
-  id: string;
+  @PrimaryColumn({ length: 45 })
+  line_id: string;
 
-  @Index('name-idx')
   @Column({ length: 50 })
   name: string;
 
-  @Index('email-idx')
-  @Column({ length: 100 })
-  email: string;
+  @Column({ length: 255, nullable: true })
+  image: string;
 
-  @Column({ length: 100 })
-  password: string;
-
-  @Column({ length: 45, nullable: true })
-  line_id: string;
-
-  @Column({ length: 100, nullable: true })
-  address: string;
+  @Column({ default: 1 })
+  chapter: number;
 
   @CreateDateColumn({
     type: 'timestamp',
