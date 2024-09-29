@@ -22,9 +22,7 @@ const LIVING_ROOM_IMAGES = [
 
 const BEDROOM_IMAGES = [
   'https://lh3.googleusercontent.com/pw/AP1GczMP04TPkjFKbxA3waJJ31HzegTL0h0pPetQNy7RqdDp7o1UJT4Zdi_K9JuryNL6iKPQCa7zxOllXZkMyyzSq3SUzSN29BFSgrA7aLZmI4Yp3tX0qQGM6fp9rbaXZ_2WXSfoIsMfqdDdtj7a0GxAGDnClQ=w2010-h1508-s-no-gm?authuser=0',
-  'https://lh3.googleusercontent.com/pw/AP1GczManfb3nsBlc2EwB5ESvuNAf0nLB5W-nD49iDi7I1pFgest6bhw3s03cd4gI0m5Ohp1C4wLzz93LP4KI8S1T5o8uOy1ht6ml4geO9HmLxipnFICX6zIir3SzD5SUAnNPyEhXBsCk2awMp3DStjkVVr8mg=w2010-h1508-s-no-gm?authuser=0',
-  'https://lh3.googleusercontent.com/pw/AP1GczM5biKR882gYAUL4TtdHSrQGl96YGkWm2BsodL-KoId5OdZFvReDm9Kcmmxozt-atnUmDW4CCl-UcebbpfRwlgPkvgdVy5INHk90dy1wKHv0SKCldZW0k3DqyKEpBlIbb8Wyi_BZJ6_2FQi_QFori0qxQ=w1132-h1508-s-no-gm?authuser=0',
-  'https://lh3.googleusercontent.com/pw/AP1GczNg3izmFKMIfBLS98HaDHRK0XXIbhrHf2WEXZub3xXvIXB2XVwpj_hKFNnt-eqidDtXUO-ECd86nFj-RWGtQIDbvpHbe_02A39ZOCMhD6lIaUSa2SagHzYqLG2dmNuJqbXfD1sxn3a3wFUpUOim6zGOwQ=w1132-h1508-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczPCvwfg_O9rsd-iXqwjGHKLBWAizhKlszjfGTOwL03NFlKcPa-MACunW1gAdnuSL5wS02ghX6DEiYlkXPvfar0a0Hs6PXj0kK6y5rlUL1Z1C5aQIAEafusrzNiopv6azuTLjG7TsWXnJm3prcPnZDDnDw=w2010-h1508-s-no-gm?authuser=0',
 ];
 
 const IMAGE_MAP = new Map([
