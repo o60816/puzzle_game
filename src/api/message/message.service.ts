@@ -187,7 +187,7 @@ export class MessageService {
                   previewImageUrl: image,
                 });
               }
-            }else
+            }
           } else {
             messages.push({
               type: 'text',

@@ -18,7 +18,7 @@ services:
             - JWT_REFRESH_TOKEN_KEY
             - LOG_LEVEL
             - CHANNEL_ACCESS_TOKEN
-        command: sh -c "npm install && npm run start:prod"
+        command: sh -c "npm install && npm run build && npm run start:prod"
 
     mariadb:
         image: mariadb:latest
@@ -31,3 +31,18 @@ services:
             - MYSQL_PASSWORD
         volumes:
             - ./mysql-dump:/docker-entrypoint-initdb.d/
+
+    nngrok:                                                                           
+        image: ngrok/ngrok:alpine                                                      
+        restart: always                                                     
+        environment:                                 
+            NGROK_AUTHTOKEN: 2ahuYLPH2rgwjGLSyQLfV3hGY3z_UspK7LFNLDtK1BxNb5em
+        command:                                                            
+            - "start"                                                         
+            - "--all"
+            - "--config"
+            - "/etc/ngrok.yml"
+        volumes:
+            - ./ngrok.yml:/etc/ngrok.yml
+        ports:
+            - 4040:4040   
