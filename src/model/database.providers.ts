@@ -24,7 +24,6 @@ export const databaseProviders = [
         password: MYSQL_PASSWORD,
         database: MYSQL_DATABASE,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
         logging: true,
         logger: new TypeOrmLogger(true),
       });
