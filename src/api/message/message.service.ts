@@ -187,6 +187,11 @@ export class MessageService {
                   previewImageUrl: image,
                 });
               }
+            } else {
+              messages.push({
+                type: 'text',
+                text: '恭喜你完成了所有關卡，並獲得了大秘寶，謝謝你的參與～',
+              });
             }
           } else {
             messages.push({
