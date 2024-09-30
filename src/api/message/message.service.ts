@@ -248,7 +248,7 @@ export class MessageService {
       } catch (error) {
         logger.error(error.message);
         messages = [
-          { type: 'text', text: '出了點小意外, 請在嘗試一次剛剛的動作' },
+          { type: 'text', text: '出了點小意外, 請先封鎖再解除封鎖後再試一次' },
         ];
       }
       if ('replyToken' in event && event.replyToken) {
