@@ -5,7 +5,11 @@ import {
   TextEventMessage,
   WebhookRequestBody,
 } from '@line/bot-sdk';
-import { Message } from '@line/bot-sdk/dist/messaging-api/api';
+import {
+  ImageCarouselTemplate,
+  Message,
+  TemplateMessage,
+} from '@line/bot-sdk/dist/messaging-api/api';
 import { Inject, Injectable } from '@nestjs/common';
 import { ProblemsEntity } from 'src/model/repositories/problems/problems.entity';
 import { UsersEntity } from 'src/model/repositories/users/users.entity';
@@ -48,7 +52,7 @@ export class MessageService {
     return profile;
   }
   async handleFollow(userId: string) {
-    const messages = [];
+    const messages: Message[] = [];
     try {
       const { displayName, pictureUrl } = await this.createUser(userId);
       const { title, question, image } = await this.problemsRepository.findOne({
@@ -109,7 +113,7 @@ export class MessageService {
       where: { number: user.chapter },
     });
     const { text } = message;
-    const messages = [];
+    const messages: Message[] = [];
     switch (text) {
       case '查看目前題目':
         if (problem) {
@@ -142,7 +146,7 @@ export class MessageService {
         } else {
           const images = IMAGE_MAP.get(text);
           if (images) {
-            const carouselTemplate = {
+            const carouselTemplate: TemplateMessage = {
               type: 'template',
               altText: 'images',
               template: {
@@ -151,13 +155,15 @@ export class MessageService {
               },
             };
             for (const imageUrl of images) {
-              carouselTemplate.template.columns.push({
-                imageUrl,
-                action: {
-                  type: 'uri',
-                  uri: imageUrl,
+              (carouselTemplate.template as ImageCarouselTemplate).columns.push(
+                {
+                  imageUrl,
+                  action: {
+                    type: 'uri',
+                    uri: imageUrl,
+                  },
                 },
-              });
+              );
             }
             messages.push(carouselTemplate);
           }
