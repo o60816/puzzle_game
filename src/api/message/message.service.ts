@@ -39,70 +39,63 @@ export class MessageService {
     private problemsRepository: Repository<ProblemsEntity>,
   ) {}
 
-  async createUser(
-    userId: string,
-  ): Promise<{ displayName: string; pictureUrl: string }> {
-    try {
-      const profile = await getProfile(userId);
-      await this.usersRepository.save({
-        line_id: userId,
-        name: profile.displayName,
-        picture_url: profile.pictureUrl,
-        chapter: 1,
-      });
-      return {
-        displayName: profile.displayName,
-        pictureUrl: profile.pictureUrl,
-      };
-    } catch (error) {
-      logger.error(`Failed to create user: ${error.message}`);
-      throw error;
+  async createUser(userId: string): Promise<UsersEntity> {
+    const profile = await getProfile(userId);
+    let user = await this.usersRepository.findOne({
+      where: { line_id: userId },
+    });
+    if (user) {
+      return user;
     }
+    user = await this.usersRepository.save({
+      line_id: userId,
+      name: profile.displayName,
+      image: profile.pictureUrl,
+      chapter: 1,
+    });
+    return user;
   }
 
   async handleFollow(userId: string): Promise<Message[]> {
-    try {
-      const { displayName, pictureUrl } = await this.createUser(userId);
-      const problem = await this.problemsRepository.findOne({
-        where: { number: 1 },
-      });
-
-      return [
-        this.createWelcomeFlexMessage(displayName, pictureUrl),
-        this.createProblemMessage(problem),
-        ...(problem.image ? [this.createImageMessage(problem.image)] : []),
-      ];
-    } catch (error) {
-      logger.error(`Error handling follow event: ${error.message}`);
-      return [this.createErrorMessage(error)];
+    const { name, image, chapter } = await this.createUser(userId);
+    const problem = await this.problemsRepository.findOne({
+      where: { number: chapter },
+    });
+    const message: Message[] = [this.createWelcomeFlexMessage(name, image)];
+    if (!problem) {
+      message.push({ type: 'text', text: '恭喜你完成了所有題目！' });
+      return message;
     }
+    message.push(this.createProblemMessage(problem));
+    if (problem.image) {
+      message.push(this.createImageMessage(problem.image));
+    }
+    return message;
   }
 
   async handleTextMessage(
     userId: string,
     message: TextEventMessage,
   ): Promise<Message[]> {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { line_id: userId },
-      });
-      const problem = await this.problemsRepository.findOne({
-        where: { number: user.chapter },
-      });
-      const { text } = message;
+    const user = await this.usersRepository.findOne({
+      where: { line_id: userId },
+    });
+    const problem = await this.problemsRepository.findOne({
+      where: { number: user.chapter },
+    });
+    if (!problem) {
+      return [{ type: 'text', text: '恭喜你完成了所有題目！' }];
+    }
+    const { text } = message;
 
-      switch (text) {
-        case '查看目前題目':
-          return this.handleViewCurrentProblem(problem);
-        case '查看客廳場景':
-        case '查看主臥場景':
-          return this.handleViewScene(text);
-        default:
-          return this.handleAnswerAttempt(user, problem, text);
-      }
-    } catch (error) {
-      logger.error(`Error handling text message: ${error.message}`);
-      return [this.createErrorMessage(error)];
+    switch (text) {
+      case '查看目前題目':
+        return this.handleViewCurrentProblem(problem);
+      case '查看客廳場景':
+      case '查看主臥場景':
+        return [this.handleViewScene(text)];
+      default:
+        return this.handleAnswerAttempt(user, problem, text);
     }
   }
 
@@ -141,7 +134,6 @@ export class MessageService {
             break;
           case 'message':
             messages = await this.handleMessage(userId, event.message);
-            await replyMessage(event.replyToken, messages);
             break;
           default:
             return;
@@ -171,7 +163,6 @@ export class MessageService {
           type: 'image',
           url: pictureUrl,
           size: 'full',
-          aspectRatio: '20:13',
           aspectMode: 'cover',
         },
         body: {
@@ -186,7 +177,7 @@ export class MessageService {
             },
             {
               type: 'text',
-              text: '歡迎來到密室逃脫遊戲！',
+              text: '來到密室逃脫遊戲！',
               wrap: true,
             },
           ],
@@ -201,17 +192,27 @@ export class MessageService {
     };
   }
 
+  private createCasualImageMessage(images: string[] = []): Message {
+    return {
+      type: 'template',
+      altText: 'images',
+      template: {
+        type: 'image_carousel',
+        columns: images.map((imageUrl) => ({
+          imageUrl,
+          action: {
+            type: 'uri',
+            uri: imageUrl,
+          },
+        })),
+      },
+    };
+  }
   private createImageMessage(imageUrl: string): Message {
     return {
       type: 'image',
       originalContentUrl: imageUrl,
       previewImageUrl: imageUrl,
-    };
-  }
-  private createErrorMessage(error: Error): Message {
-    return {
-      type: 'text',
-      text: `發生錯誤：${error.message}`,
     };
   }
 
@@ -223,12 +224,8 @@ export class MessageService {
     return messages;
   }
 
-  private handleViewScene(sceneType: string): Message[] {
-    const images =
-      sceneType === '查看客廳場景' ? LIVING_ROOM_IMAGES : BEDROOM_IMAGES;
-    return images.map((imageUrl) =>
-      this.createImageMessage(IMAGE_MAP[imageUrl]),
-    );
+  private handleViewScene(sceneType: string): Message {
+    return this.createCasualImageMessage(IMAGE_MAP.get(sceneType));
   }
 
   private async handleAnswerAttempt(
@@ -236,25 +233,23 @@ export class MessageService {
     problem: ProblemsEntity,
     answer: string,
   ): Promise<Message[]> {
-    if (answer === problem.answer) {
-      const nextProblem = await this.problemsRepository.findOne({
-        where: { number: user.chapter + 1 },
-      });
-      if (nextProblem) {
-        user.chapter += 1;
-        await this.usersRepository.save(user);
-        return [
-          { type: 'text', text: '恭喜你答對了！' },
-          this.createProblemMessage(nextProblem),
-          ...(nextProblem.image
-            ? [this.createImageMessage(nextProblem.image)]
-            : []),
-        ];
-      } else {
-        return [{ type: 'text', text: '恭喜你完成了所有題目！' }];
-      }
-    } else {
-      return [{ type: 'text', text: '很抱歉，答案不正確。請再試一次！' }];
+    if (answer !== problem.answer) {
+      return [{ type: 'text', text: problem.error_message }];
     }
+    user.chapter += 1;
+    await this.usersRepository.save(user);
+    const nextProblem = await this.problemsRepository.findOne({
+      where: { number: user.chapter },
+    });
+    if (nextProblem) {
+      return [
+        { type: 'text', text: '恭喜你答對了！' },
+        this.createProblemMessage(nextProblem),
+        ...(nextProblem.image
+          ? [this.createImageMessage(nextProblem.image)]
+          : []),
+      ];
+    }
+    return [{ type: 'text', text: '恭喜你完成了所有題目！' }];
   }
 }
