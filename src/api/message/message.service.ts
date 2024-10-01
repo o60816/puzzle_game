@@ -5,11 +5,7 @@ import {
   TextEventMessage,
   WebhookRequestBody,
 } from '@line/bot-sdk';
-import {
-  ImageCarouselTemplate,
-  Message,
-  TemplateMessage,
-} from '@line/bot-sdk/dist/messaging-api/api';
+import { Message } from '@line/bot-sdk/dist/messaging-api/api';
 import { Inject, Injectable } from '@nestjs/common';
 import { ProblemsEntity } from 'src/model/repositories/problems/problems.entity';
 import { UsersEntity } from 'src/model/repositories/users/users.entity';
@@ -42,183 +38,81 @@ export class MessageService {
     @Inject('PROBLEM_REPOSITORY')
     private problemsRepository: Repository<ProblemsEntity>,
   ) {}
-  async createUser(userId: string) {
-    const profile = await getProfile(userId);
-    await this.usersRepository.insert({
-      line_id: userId,
-      name: profile.displayName,
-      image: profile.pictureUrl,
-    });
-    return profile;
+
+  async createUser(
+    userId: string,
+  ): Promise<{ displayName: string; pictureUrl: string }> {
+    try {
+      const profile = await getProfile(userId);
+      await this.usersRepository.save({
+        line_id: userId,
+        name: profile.displayName,
+        picture_url: profile.pictureUrl,
+        chapter: 1,
+      });
+      return {
+        displayName: profile.displayName,
+        pictureUrl: profile.pictureUrl,
+      };
+    } catch (error) {
+      logger.error(`Failed to create user: ${error.message}`);
+      throw error;
+    }
   }
-  async handleFollow(userId: string) {
-    const messages: Message[] = [];
+
+  async handleFollow(userId: string): Promise<Message[]> {
     try {
       const { displayName, pictureUrl } = await this.createUser(userId);
-      const { title, question, image } = await this.problemsRepository.findOne({
+      const problem = await this.problemsRepository.findOne({
         where: { number: 1 },
       });
-      messages.push({
-        type: 'flex',
-        altText: `${displayName}, 歡迎加入遊戲`,
-        contents: {
-          type: 'bubble',
-          hero: {
-            type: 'image',
-            url: pictureUrl,
-            size: 'full',
-            aspectMode: 'cover',
-          },
-          body: {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'text',
-                text: `${displayName}, 歡迎加入遊戲`,
-              },
-            ],
-          },
-        },
+
+      return [
+        this.createWelcomeFlexMessage(displayName, pictureUrl),
+        this.createProblemMessage(problem),
+        ...(problem.image ? [this.createImageMessage(problem.image)] : []),
+      ];
+    } catch (error) {
+      logger.error(`Error handling follow event: ${error.message}`);
+      return [this.createErrorMessage(error)];
+    }
+  }
+
+  async handleTextMessage(
+    userId: string,
+    message: TextEventMessage,
+  ): Promise<Message[]> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { line_id: userId },
       });
-      messages.push({
-        type: 'text',
-        text: `${title}\n${question}`,
+      const problem = await this.problemsRepository.findOne({
+        where: { number: user.chapter },
       });
-      if (image) {
-        messages.push({
-          type: 'image',
-          originalContentUrl: image,
-          previewImageUrl: image,
-        });
+      const { text } = message;
+
+      switch (text) {
+        case '查看目前題目':
+          return this.handleViewCurrentProblem(problem);
+        case '查看客廳場景':
+        case '查看主臥場景':
+          return this.handleViewScene(text);
+        default:
+          return this.handleAnswerAttempt(user, problem, text);
       }
     } catch (error) {
-      let text = '歡迎回來，請繼續遊戲';
-      if (-1 === error.message.indexOf(`for key 'PRIMARY'`)) {
-        text = '加入遊戲失敗，請先封鎖再解除封鎖，嘗試重新加入遊戲';
-      }
-      logger.error(error.message);
-      messages.push({
-        type: 'text',
-        text,
-      });
+      logger.error(`Error handling text message: ${error.message}`);
+      return [this.createErrorMessage(error)];
     }
-    return messages;
   }
-  async handleTextMessage(userId: string, message: TextEventMessage) {
-    const user = await this.usersRepository.findOne({
-      where: { line_id: userId },
-    });
-    const problem = await this.problemsRepository.findOne({
-      where: { number: user.chapter },
-    });
-    const { text } = message;
-    const messages: Message[] = [];
-    switch (text) {
-      case '查看目前題目':
-        if (problem) {
-          const { title, question, image } = problem;
-          messages.push({
-            type: 'text',
-            text: `${title}\n${question}`,
-          });
-          if (image) {
-            messages.push({
-              type: 'image',
-              originalContentUrl: image,
-              previewImageUrl: image,
-            });
-          }
-        } else {
-          messages.push({
-            type: 'text',
-            text: '恭喜你完成了所有關卡，並獲得了大秘寶，謝謝你的參與～',
-          });
-        }
-        break;
-      case '查看客廳場景':
-      case '查看主臥場景':
-        if (1 === user.chapter) {
-          messages.push({
-            type: 'text',
-            text: '請先進入大門',
-          });
-        } else {
-          const images = IMAGE_MAP.get(text);
-          if (images) {
-            const carouselTemplate: TemplateMessage = {
-              type: 'template',
-              altText: 'images',
-              template: {
-                type: 'image_carousel',
-                columns: [],
-              },
-            };
-            for (const imageUrl of images) {
-              (carouselTemplate.template as ImageCarouselTemplate).columns.push(
-                {
-                  imageUrl,
-                  action: {
-                    type: 'uri',
-                    uri: imageUrl,
-                  },
-                },
-              );
-            }
-            messages.push(carouselTemplate);
-          }
-        }
-        break;
-      default:
-        const nextProblem = await this.problemsRepository.findOne({
-          where: { number: user.chapter + 1 },
-        });
 
-        if (problem) {
-          if (text === problem.answer) {
-            user.chapter = user.chapter + 1;
-            await this.usersRepository.save(user);
-            if (nextProblem) {
-              const { title, question, image } = nextProblem;
-              messages.push({
-                type: 'text',
-                text: `${title}\n${question}`,
-              });
-              if (image) {
-                messages.push({
-                  type: 'image',
-                  originalContentUrl: image,
-                  previewImageUrl: image,
-                });
-              }
-            } else {
-              messages.push({
-                type: 'text',
-                text: '恭喜你完成了所有關卡，並獲得了大秘寶，謝謝你的參與～',
-              });
-            }
-          } else {
-            messages.push({
-              type: 'text',
-              text: problem.error_message,
-            });
-          }
-        } else {
-          messages.push({
-            type: 'text',
-            text: '恭喜你完成了所有關卡，並獲得了大秘寶，謝謝你的參與～',
-          });
-        }
-        break;
-    }
-    return messages;
-  }
   async handleMediaMessage(
     userId: string,
     message: ImageEventMessage | AudioEventMessage,
   ) {
     return [];
   }
+
   async handleMessage(userId: string, message: EventMessage) {
     const { type } = message;
     switch (type) {
@@ -231,6 +125,7 @@ export class MessageService {
         return [];
     }
   }
+
   async dispatchMessage(body: WebhookRequestBody) {
     let messages: Message[] = [];
     const { events } = body;
@@ -260,6 +155,106 @@ export class MessageService {
       if ('replyToken' in event && event.replyToken) {
         await replyMessage(event.replyToken, messages);
       }
+    }
+  }
+
+  private createWelcomeFlexMessage(
+    displayName: string,
+    pictureUrl: string,
+  ): Message {
+    return {
+      type: 'flex',
+      altText: '歡迎加入',
+      contents: {
+        type: 'bubble',
+        hero: {
+          type: 'image',
+          url: pictureUrl,
+          size: 'full',
+          aspectRatio: '20:13',
+          aspectMode: 'cover',
+        },
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: `歡迎 ${displayName}`,
+              weight: 'bold',
+              size: 'xl',
+            },
+            {
+              type: 'text',
+              text: '歡迎來到密室逃脫遊戲！',
+              wrap: true,
+            },
+          ],
+        },
+      },
+    };
+  }
+  private createProblemMessage(problem: ProblemsEntity): Message {
+    return {
+      type: 'text',
+      text: `題目：${problem.question}`,
+    };
+  }
+
+  private createImageMessage(imageUrl: string): Message {
+    return {
+      type: 'image',
+      originalContentUrl: imageUrl,
+      previewImageUrl: imageUrl,
+    };
+  }
+  private createErrorMessage(error: Error): Message {
+    return {
+      type: 'text',
+      text: `發生錯誤：${error.message}`,
+    };
+  }
+
+  private handleViewCurrentProblem(problem: ProblemsEntity): Message[] {
+    const messages: Message[] = [this.createProblemMessage(problem)];
+    if (problem.image) {
+      messages.push(this.createImageMessage(problem.image));
+    }
+    return messages;
+  }
+
+  private handleViewScene(sceneType: string): Message[] {
+    const images =
+      sceneType === '查看客廳場景' ? LIVING_ROOM_IMAGES : BEDROOM_IMAGES;
+    return images.map((imageUrl) =>
+      this.createImageMessage(IMAGE_MAP[imageUrl]),
+    );
+  }
+
+  private async handleAnswerAttempt(
+    user: UsersEntity,
+    problem: ProblemsEntity,
+    answer: string,
+  ): Promise<Message[]> {
+    if (answer === problem.answer) {
+      const nextProblem = await this.problemsRepository.findOne({
+        where: { number: user.chapter + 1 },
+      });
+      if (nextProblem) {
+        user.chapter += 1;
+        await this.usersRepository.save(user);
+        return [
+          { type: 'text', text: '恭喜你答對了！' },
+          this.createProblemMessage(nextProblem),
+          ...(nextProblem.image
+            ? [this.createImageMessage(nextProblem.image)]
+            : []),
+        ];
+      } else {
+        return [{ type: 'text', text: '恭喜你完成了所有題目！' }];
+      }
+    } else {
+      return [{ type: 'text', text: '很抱歉，答案不正確。請再試一次！' }];
     }
   }
 }
