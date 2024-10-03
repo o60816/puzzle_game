@@ -25,9 +25,16 @@ const BEDROOM_IMAGES = [
   'https://lh3.googleusercontent.com/pw/AP1GczPCvwfg_O9rsd-iXqwjGHKLBWAizhKlszjfGTOwL03NFlKcPa-MACunW1gAdnuSL5wS02ghX6DEiYlkXPvfar0a0Hs6PXj0kK6y5rlUL1Z1C5aQIAEafusrzNiopv6azuTLjG7TsWXnJm3prcPnZDDnDw=w2010-h1508-s-no-gm?authuser=0',
 ];
 
+const KITCHEN_IMAGES = [
+  'https://lh3.googleusercontent.com/pw/AP1GczNSHf0_6_hKGj7sHhbPMGi03WM3sNGuPgwt30GFrvdlU8zACK58r2L92VUP48WQx3EvbqPd4MTZZ1GE9w3xtS1trZz74bSgVRVMukHvgivprhOuh-w9etWYf8iJtNo4bSIMs0M1FaRqmXAbArv4R9yPVQ=w1109-h1479-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczP-mQ3KFsF7nU4PU2ECRRlBmm4T2WS-gE76GKrIY0OQ18Ap5wni-S6XADyDsaaZ-YJT8Ul4HEwsKwkC2w3Q-cWLbZo8_DEA2SZlr03BxjRxOp93TnPI1BRd_KSqAdZ_tw7YbW4MOzd-Yt7CUeShkM-9Xw=w1109-h1479-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczNuClwsi6WqCyfMoU8noyqQPY7Bjj0C44NwrDFYLjkJmJi2Jfi583KYN36hDmOi1EUGX0VkPGGUIoAHF1eUN8uPfEjfqMG0FKM-HITz5MJf3gA476HkXQlcCIt5nCgRZmKwaRArcUGmx8lGtG-Ocu3t3A=w2010-h1508-s-no-gm?authuser=0',
+];
+
 const IMAGE_MAP = new Map([
   ['查看客廳場景', LIVING_ROOM_IMAGES],
   ['查看主臥場景', BEDROOM_IMAGES],
+  ['查看廚房場景', KITCHEN_IMAGES],
 ]);
 
 @Injectable()
@@ -93,6 +100,7 @@ export class MessageService {
         return this.handleViewCurrentProblem(problem);
       case '查看客廳場景':
       case '查看主臥場景':
+      case '查看廚房場景':
         return [this.handleViewScene(text)];
       default:
         return this.handleAnswerAttempt(user, problem, text);
