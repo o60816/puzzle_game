@@ -73,7 +73,7 @@ export class MessageService {
       message.push(this.createTextMessage('恭喜你完成了所有題目！'));
       return message;
     }
-    message.push(this.createProblemMessage(problem));
+    message.push(...this.createProblemMessage(problem));
     if (problem.image) {
       message.push(this.createImageMessage(problem.image));
     }
@@ -203,11 +203,17 @@ export class MessageService {
       },
     };
   }
-  private createProblemMessage(problem: ProblemsEntity): Message {
-    return {
-      type: 'text',
-      text: `題目：${problem.question}`,
-    };
+  private createProblemMessage(problem: ProblemsEntity): Message[] {
+    return [
+      {
+        type: 'text',
+        text: `${problem.title}`,
+      },
+      {
+        type: 'text',
+        text: `${problem.question}`,
+      },
+    ];
   }
 
   private createCasualImageMessage(images: string[] = []): Message {
@@ -235,7 +241,7 @@ export class MessageService {
   }
 
   private handleViewCurrentProblem(problem: ProblemsEntity): Message[] {
-    const messages: Message[] = [this.createProblemMessage(problem)];
+    const messages: Message[] = this.createProblemMessage(problem);
     if (problem.image) {
       messages.push(this.createImageMessage(problem.image));
     }
@@ -262,7 +268,7 @@ export class MessageService {
     if (nextProblem) {
       return [
         this.createTextMessage('恭喜你答對了！'),
-        this.createProblemMessage(nextProblem),
+        ...this.createProblemMessage(nextProblem),
         ...(nextProblem.image
           ? [this.createImageMessage(nextProblem.image)]
           : []),
