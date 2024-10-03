@@ -232,7 +232,7 @@ export class MessageService {
               },
               {
                 type: 'text',
-                text: '不是開玩笑是真的有財(ㄌ一ˇ)寶(ㄨˋ)喔！！',
+                text: '(是真的有財(ㄌ一ˇ)寶(ㄨˋ)喔！！)',
               },
             ],
           },
