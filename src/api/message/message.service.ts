@@ -216,7 +216,7 @@ export class MessageService {
               },
               {
                 type: 'text',
-                text: '各位挑戰者們，想要我的寶物嗎？',
+                text: '各位挑戰者們，想要我的財寶嗎？',
               },
               {
                 type: 'text',
@@ -228,7 +228,11 @@ export class MessageService {
               },
               {
                 type: 'text',
-                text: '我把所有的寶物都放在那裡了!',
+                text: '我把所有的財寶都放在那裡了!',
+              },
+              {
+                type: 'text',
+                text: '不是開玩笑是真的有財(ㄌ一ˇ)寶(ㄨˋ)喔！！',
               },
             ],
           },
