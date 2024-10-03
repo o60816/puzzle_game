@@ -68,7 +68,7 @@ export class MessageService {
     const problem = await this.problemsRepository.findOne({
       where: { number: chapter },
     });
-    const message: Message[] = [this.createWelcomeFlexMessage(name, image)];
+    const message: Message[] = this.createWelcomeFlexMessage(name, image);
     if (!problem) {
       message.push(this.createTextMessage('恭喜你完成了所有題目！'));
       return message;
@@ -171,37 +171,54 @@ export class MessageService {
   private createWelcomeFlexMessage(
     displayName: string,
     pictureUrl: string,
-  ): Message {
-    return {
-      type: 'flex',
-      altText: '歡迎加入',
-      contents: {
-        type: 'bubble',
-        hero: {
-          type: 'image',
-          url: pictureUrl,
-          size: 'full',
-          aspectMode: 'cover',
-        },
-        body: {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: `歡迎 ${displayName}`,
-              weight: 'bold',
-              size: 'xl',
-            },
-            {
-              type: 'text',
-              text: '來到密室逃脫遊戲！',
-              wrap: true,
-            },
-          ],
+  ): Message[] {
+    return [
+      {
+        type: 'flex',
+        altText: '歡迎加入',
+        contents: {
+          type: 'bubble',
+          hero: {
+            type: 'image',
+            url: pictureUrl,
+            size: 'full',
+            aspectMode: 'cover',
+          },
+          body: {
+            type: 'box',
+            layout: 'vertical',
+            contents: [
+              {
+                type: 'text',
+                text: `歡迎 ${displayName}`,
+                weight: 'bold',
+                size: 'xl',
+              },
+              {
+                type: 'text',
+                text: '來到婚禮解謎遊戲！',
+              },
+              {
+                type: 'text',
+                text: '各位挑戰者們，想要我的寶物嗎？',
+              },
+              {
+                type: 'text',
+                text: '想要的話可以全部給你!',
+              },
+              {
+                type: 'text',
+                text: '去找吧!',
+              },
+              {
+                type: 'text',
+                text: '我把所有的寶物都放在那裡了!',
+              },
+            ],
+          },
         },
       },
-    };
+    ];
   }
   private createProblemMessage(problem: ProblemsEntity): Message[] {
     return [
