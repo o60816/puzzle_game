@@ -13,15 +13,10 @@ export class UsersService {
   ) {}
 
   async findAll(): Promise<UsersEntity[]> {
-    const totalChapters = await this.problemsRepository.count();
-
     return this.usersRepository.find({
-      select: ['image', 'name', 'updated_at'],
+      select: ['image', 'name', 'chapter', 'updated_at'],
       order: {
         updated_at: 'ASC',
-      },
-      where: {
-        chapter: totalChapters + 1,
       },
     });
   }

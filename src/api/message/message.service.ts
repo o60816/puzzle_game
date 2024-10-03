@@ -37,6 +37,9 @@ const IMAGE_MAP = new Map([
   ['查看廚房場景', KITCHEN_IMAGES],
 ]);
 
+const FINISH_MESSAGE =
+  '恭喜你順利解開所有謎題~♪~♬~\n也感謝你來參加我們的婚禮♥\n希望你今天玩得開心唷(｡◕∀◕｡)/';
+
 @Injectable()
 export class MessageService {
   constructor(
@@ -70,7 +73,7 @@ export class MessageService {
     });
     const message: Message[] = this.createWelcomeFlexMessage(name, image);
     if (!problem) {
-      message.push(this.createTextMessage('恭喜你完成了所有題目！'));
+      message.push(this.createTextMessage(FINISH_MESSAGE));
       return message;
     }
     message.push(...this.createProblemMessage(problem));
@@ -91,7 +94,7 @@ export class MessageService {
       where: { number: user.chapter },
     });
     if (!problem) {
-      return [this.createTextMessage('恭喜你完成了所有題目！')];
+      return [this.createTextMessage(FINISH_MESSAGE)];
     }
     const { text } = message;
 
@@ -291,6 +294,6 @@ export class MessageService {
           : []),
       ];
     }
-    return [this.createTextMessage('恭喜你完成了所有題目！')];
+    return [this.createTextMessage(FINISH_MESSAGE)];
   }
 }
