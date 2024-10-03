@@ -70,7 +70,7 @@ export class MessageService {
     });
     const message: Message[] = [this.createWelcomeFlexMessage(name, image)];
     if (!problem) {
-      message.push({ type: 'text', text: '恭喜你完成了所有題目！' });
+      message.push(this.createTextMessage('恭喜你完成了所有題目！'));
       return message;
     }
     message.push(this.createProblemMessage(problem));
@@ -91,7 +91,7 @@ export class MessageService {
       where: { number: user.chapter },
     });
     if (!problem) {
-      return [{ type: 'text', text: '恭喜你完成了所有題目！' }];
+      return [this.createTextMessage('恭喜你完成了所有題目！')];
     }
     const { text } = message;
 
@@ -101,7 +101,10 @@ export class MessageService {
       case '查看客廳場景':
       case '查看主臥場景':
       case '查看廚房場景':
-        return [this.handleViewScene(text)];
+        if (1 == user.chapter) {
+          return [this.createTextMessage('目前還不能查看喔！請先進入大門')];
+        }
+        return this.handleViewScene(text);
       default:
         return this.handleAnswerAttempt(user, problem, text);
     }
@@ -149,13 +152,20 @@ export class MessageService {
       } catch (error) {
         logger.error(error.message);
         messages = [
-          { type: 'text', text: '出了點小意外, 請先封鎖再解除封鎖後再試一次' },
+          this.createTextMessage('出了點小意外, 請先封鎖再解除封鎖後再試一次'),
         ];
       }
       if ('replyToken' in event && event.replyToken) {
         await replyMessage(event.replyToken, messages);
       }
     }
+  }
+
+  private createTextMessage(text: string): Message {
+    return {
+      type: 'text',
+      text,
+    };
   }
 
   private createWelcomeFlexMessage(
@@ -232,8 +242,8 @@ export class MessageService {
     return messages;
   }
 
-  private handleViewScene(sceneType: string): Message {
-    return this.createCasualImageMessage(IMAGE_MAP.get(sceneType));
+  private handleViewScene(sceneType: string): Message[] {
+    return [this.createCasualImageMessage(IMAGE_MAP.get(sceneType))];
   }
 
   private async handleAnswerAttempt(
@@ -242,7 +252,7 @@ export class MessageService {
     answer: string,
   ): Promise<Message[]> {
     if (answer !== problem.answer) {
-      return [{ type: 'text', text: problem.error_message }];
+      return [this.createTextMessage(problem.error_message)];
     }
     user.chapter += 1;
     await this.usersRepository.save(user);
@@ -251,13 +261,13 @@ export class MessageService {
     });
     if (nextProblem) {
       return [
-        { type: 'text', text: '恭喜你答對了！' },
+        this.createTextMessage('恭喜你答對了！'),
         this.createProblemMessage(nextProblem),
         ...(nextProblem.image
           ? [this.createImageMessage(nextProblem.image)]
           : []),
       ];
     }
-    return [{ type: 'text', text: '恭喜你完成了所有題目！' }];
+    return [this.createTextMessage('恭喜你完成了所有題目！')];
   }
 }
