@@ -40,6 +40,12 @@ const IMAGE_MAP = new Map([
 const FINISH_MESSAGE =
   '恭喜你順利解開所有謎題~♪~♬~\n也感謝你來參加我們的婚禮♥\n希望你今天玩得開心唷(｡◕∀◕｡)/';
 
+const FINISH_IMAGES = [
+  'https://lh3.googleusercontent.com/pw/AP1GczNz4o17twJDvdO479Dplh8jbMeZNeke2lQ7d4ikC2Wpzho22anQHh-ULnO-MJ_74Bv9iqj7uFzUpM5qBrsn28Gn_hH4URDNrapn5yteO-5xZ4X9-Nv86TCwq7KMiNzecdzjGTVykO0TUBLkkXbtdSqNpA=w2262-h1508-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczMm6RmFF_wfVWsKCmTSJBADJMbGy83Mr01BfNBno1SWHCrIitvw70yqb39GbMcNEWDcK0GfO1AH8pEGVozye0p_vUsF9SJD403z5xRRFG-xG0Lp5Gc6IPEowAmGK21aBBXsNhE9qFo4ltyAAV25tauckA=w2262-h1508-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczPQHvKSSH_0HASKtzYu3FeiZ1e2-YIiQh9iP7ketu3h-PQQ54r2lQS6mlbB_auKaOQxxGX5-aqz5dR7SAe4x14AxKiJ8QSRbXEzHoLvQAJR17SrugW4yswrV_3R1pnRwUxbWYT2p2-st5jlbDQ-iZN0BA=w2262-h1508-s-no-gm?authuser=0',
+];
+
 @Injectable()
 export class MessageService {
   constructor(
@@ -73,7 +79,7 @@ export class MessageService {
     });
     const message: Message[] = this.createWelcomeFlexMessage(name, image);
     if (!problem) {
-      message.push(this.createTextMessage(FINISH_MESSAGE));
+      message.push(...this.createFinishedMessage());
       return message;
     }
     message.push(...this.createProblemMessage(problem));
@@ -94,7 +100,7 @@ export class MessageService {
       where: { number: user.chapter },
     });
     if (!problem) {
-      return [this.createTextMessage(FINISH_MESSAGE)];
+      return this.createFinishedMessage();
     }
     const { text } = message;
 
@@ -162,6 +168,13 @@ export class MessageService {
         await replyMessage(event.replyToken, messages);
       }
     }
+  }
+
+  private createFinishedMessage() {
+    return [
+      this.createTextMessage(FINISH_MESSAGE),
+      this.createImageMessage(FINISH_IMAGES[Date.now() % FINISH_IMAGES.length]),
+    ];
   }
 
   private createTextMessage(text: string): Message {
@@ -294,6 +307,6 @@ export class MessageService {
           : []),
       ];
     }
-    return [this.createTextMessage(FINISH_MESSAGE)];
+    return this.createFinishedMessage();
   }
 }
