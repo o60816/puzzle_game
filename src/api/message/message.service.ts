@@ -21,8 +21,9 @@ const LIVING_ROOM_IMAGES = [
 ];
 
 const BEDROOM_IMAGES = [
-  'https://lh3.googleusercontent.com/pw/AP1GczO9EHXVuwNBdJBZZW14HZFMNR9K75hxBF2EjTgOLeSJfEWJO4BoL0xFWT7O5Ywyg4bac-aJZcYlMv7lhqiVf4yDdVNQlTh2_rhz4aCqOmqlJD3bWjOjRDlUGchA9vwKYOiJyB5HYrUq5ojPAJd3eZDQQA=w2010-h1508-s-no-gm?authuser=0',
-  'https://lh3.googleusercontent.com/pw/AP1GczPCvwfg_O9rsd-iXqwjGHKLBWAizhKlszjfGTOwL03NFlKcPa-MACunW1gAdnuSL5wS02ghX6DEiYlkXPvfar0a0Hs6PXj0kK6y5rlUL1Z1C5aQIAEafusrzNiopv6azuTLjG7TsWXnJm3prcPnZDDnDw=w2010-h1508-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczP3-AjhGjzItM9KZjpweHDtor1wzdrWPQf-itWWSpTVN_I1olcphXskzNf4LSzZ2ye5vP0v7vHEFVmqWvECZgCnU8XN-MILbG1sc3GDVpTgaenUOnyS0L04SZNguaF1CpszbBdVzJbOjw5X5_Wm2ES8aA=w2010-h1508-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczNt_Xu9oay-_bapuzOgevGKNPz04zg9WLBeIQegXYbpYGC9qP2x4hZl_kbsO07mC9wOcmIG9VgS1d3SfORtcOvTLgq59PKWSS-eH0_qxd0wO29R4d_RIeBRrGkQ-bMwW3pgN_WgJ4Z-CYVoF1Qym8jwmg=w1132-h1508-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczNwPqc9PXoMO5T6E3PxJZoJ_M-UH2J34J6ASBPO07SvAA3VzlSrSCvV35AMbNihkhZ60PUtoVHBk9LcgnQ6Is1HbqDfMbgmTNzrfnZjoJXLUz7HCBVJSJJTK5qv-tcrZBj-j05BYSG6tt-Sw6AadITGKQ=w2010-h1508-s-no-gm?authuser=0',
 ];
 
 const KITCHEN_IMAGES = [
