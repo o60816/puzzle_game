@@ -44,9 +44,6 @@ const UserList = () => {
         </thead>
         <tbody>
           {users
-            .filter((user) => {
-              return user.chapter === 4;
-            })
             .map((user, index) => (
               <tr key={user.line_id}>
                 <td>{index + 1}</td>
