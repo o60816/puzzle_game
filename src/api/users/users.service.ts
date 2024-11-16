@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindOptionsOrderValue, Repository } from 'typeorm';
 import { UsersEntity } from '../../model/repositories/users/users.entity';
 import { ProblemsEntity } from 'src/model/repositories/problems/problems.entity';
 
@@ -12,12 +12,13 @@ export class UsersService {
     private problemsRepository: Repository<ProblemsEntity>,
   ) {}
 
-  async findAll(): Promise<UsersEntity[]> {
+  async findAll(order: {
+    created_at?: FindOptionsOrderValue;
+    updated_at?: FindOptionsOrderValue;
+  }): Promise<UsersEntity[]> {
     return this.usersRepository.find({
-      select: ['image', 'name', 'chapter', 'updated_at'],
-      order: {
-        updated_at: 'ASC',
-      },
+      select: ['image', 'name', 'chapter', 'created_at', 'updated_at'],
+      order,
     });
   }
 }

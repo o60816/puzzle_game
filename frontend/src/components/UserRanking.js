@@ -30,16 +30,14 @@ const UserList = () => {
 
   return (
     <div className="user-list">
-      <h1>掃描以下QR Code加入遊戲</h1>
-      <img src='https://lh3.googleusercontent.com/pw/AP1GczOpgn-Mhe2ItyhqWMYpYFlsH_-PKq9WaNFcoA2Q9svt_SOxnJ8GdhjnUDL62CdevwfZI139srFVPKjkP3wJ2GBTOO6KZAVSS4Ik7DUaNWReapx5tiUlz7iUyUmorryk5nalnw0LlhN0JgZR8Rlj3gKFOg=w360-h360-s-no-gm?authuser=0'></img>
-      <h2>參與人數: {userCount}</h2> {/* {{ edit_3 }} */}
+      <h1>玩家排行榜</h1>
       <table>
         <thead>
           <tr>
             <th>#</th>
             <th>大頭貼</th>
             <th>姓名</th>
-            <th>加入時間</th>
+            <th>通關時間</th>
           </tr>
         </thead>
         <tbody>
@@ -59,7 +57,7 @@ const UserList = () => {
                   />
                 </td>
                 <td>{user.name}</td>
-                <td>{new Date(user.created_at).toLocaleString()}</td>
+                <td>{new Date(user.updated_at).toLocaleString()}</td>
               </tr>
             ))}
         </tbody>

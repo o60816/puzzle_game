@@ -7,6 +7,15 @@ export class UsersController {
 
   @Get()
   async getAllUsers() {
-    return this.usersService.findAll();
+    return this.usersService.findAll({
+      created_at: 'ASC',
+    });
+  }
+
+  @Get('ranking')
+  async getUserRanking() {
+    return this.usersService.findAll({
+      updated_at: 'ASC',
+    });
   }
 }
