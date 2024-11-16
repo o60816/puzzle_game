@@ -21,7 +21,7 @@ const LIVING_ROOM_IMAGES = [
 ];
 
 const BEDROOM_IMAGES = [
-  'https://lh3.googleusercontent.com/pw/AP1GczMP04TPkjFKbxA3waJJ31HzegTL0h0pPetQNy7RqdDp7o1UJT4Zdi_K9JuryNL6iKPQCa7zxOllXZkMyyzSq3SUzSN29BFSgrA7aLZmI4Yp3tX0qQGM6fp9rbaXZ_2WXSfoIsMfqdDdtj7a0GxAGDnClQ=w2010-h1508-s-no-gm?authuser=0',
+  'https://lh3.googleusercontent.com/pw/AP1GczO9EHXVuwNBdJBZZW14HZFMNR9K75hxBF2EjTgOLeSJfEWJO4BoL0xFWT7O5Ywyg4bac-aJZcYlMv7lhqiVf4yDdVNQlTh2_rhz4aCqOmqlJD3bWjOjRDlUGchA9vwKYOiJyB5HYrUq5ojPAJd3eZDQQA=w2010-h1508-s-no-gm?authuser=0',
   'https://lh3.googleusercontent.com/pw/AP1GczPCvwfg_O9rsd-iXqwjGHKLBWAizhKlszjfGTOwL03NFlKcPa-MACunW1gAdnuSL5wS02ghX6DEiYlkXPvfar0a0Hs6PXj0kK6y5rlUL1Z1C5aQIAEafusrzNiopv6azuTLjG7TsWXnJm3prcPnZDDnDw=w2010-h1508-s-no-gm?authuser=0',
 ];
 
