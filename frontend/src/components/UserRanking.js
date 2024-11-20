@@ -44,13 +44,33 @@ const UserList = () => {
               return user.chapter === 4;
             })
             .map((user) => {
+              const secondsToHMS = (secs) => {
+                function z(n) {
+                  return (n < 10 ? '0' : '') + n;
+                }
+                var sign = secs < 0 ? '-' : '';
+                secs = Math.abs(secs);
+                return (
+                  sign +
+                  z((secs / 3600) | 0) +
+                  ':' +
+                  z(((secs % 3600) / 60) | 0) +
+                  ':' +
+                  z(secs % 60)
+                );
+              };
               return {
                 ...user,
-                passTime: user.updated_at - user.created_at,
+                passTime: secondsToHMS(
+                  Math.ceil(
+                    (new Date(user.updated_at) - new Date(user.created_at)) /
+                      1000,
+                  ),
+                ),
               };
             })
             .sort((user1, user2) => {
-              return user1.passTime - user2.passTime;
+              return new Date(user1.passTime) - new Date(user2.passTime);
             })
             .map((user, index) => (
               <tr key={user.line_id}>
@@ -64,7 +84,7 @@ const UserList = () => {
                   />
                 </td>
                 <td>{user.name}</td>
-                <td>{new Date(user.passTime).toISOString().slice(11, 19)}</td>
+                <td>{user.passTime}</td>
               </tr>
             ))}
         </tbody>
