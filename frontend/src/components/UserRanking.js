@@ -6,14 +6,12 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userCount, setUserCount] = useState(0); // {{ edit_1 }}
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('/api/users');
         setUsers(response.data);
-        setUserCount(response.data.length); // {{ edit_2 }}
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch user data');
@@ -37,13 +35,22 @@ const UserList = () => {
             <th>#</th>
             <th>大頭貼</th>
             <th>姓名</th>
-            <th>通關時間</th>
+            <th>通關用時</th>
           </tr>
         </thead>
         <tbody>
           {users
             .filter((user) => {
               return user.chapter === 4;
+            })
+            .map((user) => {
+              return {
+                ...user,
+                passTime: user.updated_at - user.created_at,
+              };
+            })
+            .sort((user1, user2) => {
+              return user1.passTime - user2.passTime;
             })
             .map((user, index) => (
               <tr key={user.line_id}>
@@ -57,7 +64,7 @@ const UserList = () => {
                   />
                 </td>
                 <td>{user.name}</td>
-                <td>{new Date(user.updated_at).toLocaleString()}</td>
+                <td>{new Date(user.passTime).toISOString().slice(11, 19)}</td>
               </tr>
             ))}
         </tbody>
