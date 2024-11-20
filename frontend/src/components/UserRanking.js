@@ -32,7 +32,7 @@ const UserList = () => {
       <table>
         <thead>
           <tr>
-            <th>#</th>
+            <th>名次</th>
             <th>大頭貼</th>
             <th>姓名</th>
             <th>通關用時</th>
@@ -53,24 +53,24 @@ const UserList = () => {
                 return (
                   sign +
                   z((secs / 3600) | 0) +
-                  ':' +
+                  '時' +
                   z(((secs % 3600) / 60) | 0) +
-                  ':' +
-                  z(secs % 60)
+                  '分' +
+                  z(secs % 60) +
+                  '秒'
                 );
               };
+              const passTime = Math.ceil(
+                (new Date(user.updated_at) - new Date(user.created_at)) / 1000,
+              );
               return {
                 ...user,
-                passTime: secondsToHMS(
-                  Math.ceil(
-                    (new Date(user.updated_at) - new Date(user.created_at)) /
-                      1000,
-                  ),
-                ),
+                passTime,
+                passTimeStr: secondsToHMS(passTime),
               };
             })
             .sort((user1, user2) => {
-              return new Date(user1.passTime) - new Date(user2.passTime);
+              return user1.passTime - user2.passTime;
             })
             .map((user, index) => (
               <tr key={user.line_id}>
@@ -84,7 +84,7 @@ const UserList = () => {
                   />
                 </td>
                 <td>{user.name}</td>
-                <td>{user.passTime}</td>
+                <td>{user.passTimeStr}</td>
               </tr>
             ))}
         </tbody>
