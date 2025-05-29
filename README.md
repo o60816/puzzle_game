@@ -1,73 +1,143 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
+# Puzzle Game
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Puzzle Game is a full-stack application built with a **NestJS** backend and a **React** frontend. It provides a platform for users to interact with puzzles, track rankings, and manage user data. The application also integrates with the **LINE Messaging API** to function as a chatbot, allowing users to interact with the system directly through LINE.
+
+## Features
+
+### Backend
+- **NestJS Framework**: A progressive Node.js framework for building efficient and scalable server-side applications.
+- **MySQL Integration**: Database support for user and problem data.
+- **RESTful API**: Endpoints for managing users, messages, and problems.
+- **LINE Chatbot Integration**: Interact with the application via the LINE Messaging API.
+- **Logging and Interceptors**: Custom logging and error handling.
+- **Unit and E2E Testing**: Comprehensive test coverage using Jest.
+
+### Frontend
+- **React Framework**: A modern JavaScript library for building user interfaces.
+- **User Management**: Components for displaying user lists and rankings.
+- **Responsive Design**: Styled with CSS for a clean and user-friendly interface.
+
+### Deployment
+- **Docker Support**: Docker Compose configuration for containerized deployment.
+- **Ngrok Integration**: Configuration for exposing local servers to the internet, useful for LINE webhook testing.
+
+## LINE Chatbot Integration
+
+The application integrates with the LINE Messaging API to provide chatbot functionality. Users can interact with the system by sending messages to the LINE bot. The bot processes user inputs and responds with relevant information or actions.
+
+### Setting Up the LINE Bot
+1. Create a LINE Developer account and set up a new Messaging API channel.
+2. Obtain the **Channel Secret** and **Channel Access Token** from the LINE Developer Console.
+3. Configure the webhook URL to point to your server (use Ngrok for local development).
+4. Add the Channel Access Token to your `.env` file:
+   ```env
+   CHANNEL_ACCESS_TOKEN=your_channel_access_token
+   ```
 
 ## Installation
 
+### Prerequisites
+- Node.js (v16 or higher)
+- Docker and Docker Compose
+- MySQL
+- Ngrok (for LINE webhook testing)
+
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd puzzle_game
+   ```
+
+2. Install dependencies for the backend:
+   ```bash
+   npm install
+   ```
+
+3. Navigate to the frontend directory and install dependencies:
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+4. Set up the database:
+   - Import the `init.sql` file from the `mysql-dump` directory into your MySQL instance.
+
+5. Configure environment variables:
+   - Create `.env` files for both the backend and frontend with the necessary configurations.
+
+## Running the App
+
+### Backend
 ```bash
-$ npm install
+# Development mode
+npm run start
+
+# Watch mode
+npm run start:dev
+
+# Production mode
+npm run start:prod
 ```
 
-## Running the app
-
+### Frontend
 ```bash
-# development
-$ npm run start
+# Navigate to the frontend directory
+cd frontend
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Start the development server
+npm start
 ```
 
-## Test
-
+### Docker
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Build and start the containers
+docker-compose up --build
 ```
 
-## Support
+### Ngrok (for LINE Webhook)
+```bash
+# Start Ngrok to expose your local server
+ngrok http 3000
+```
+Copy the Ngrok URL and update the webhook URL in the LINE Developer Console.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Testing
 
-## Stay in touch
+### Backend
+```bash
+# Unit tests
+npm run test
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# E2E tests
+npm run test:e2e
 
-## License
+# Test coverage
+npm run test:cov
+```
 
-Nest is [MIT licensed](LICENSE).
+### Frontend
+```bash
+# Run tests
+npm test
+```
+
+## Project Structure
+
+### Backend
+- **src/api**: Contains modules for `users` and `messages`.
+- **src/model**: Database modules and providers for `users` and `problems`.
+- **src/utils**: Utility functions for logging, error handling, and token management.
+- **test**: E2E test cases.
+
+### Frontend
+- **src/components**: React components for user-related features.
+- **public**: Static assets like `favicon.ico` and `index.html`.
+
+### Database
+- **mysql-dump/init.sql**: SQL script for initializing the database schema.
+
+### Configuration
+- **docker-compose.yaml**: Docker Compose configuration for containerized deployment.
+- **ngrok.yml**: Configuration for Ngrok.

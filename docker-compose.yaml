@@ -36,7 +36,7 @@ services:
         image: ngrok/ngrok:alpine                                                      
         restart: always                                                     
         environment:                                 
-            NGROK_AUTHTOKEN: 2ahuYLPH2rgwjGLSyQLfV3hGY3z_UspK7LFNLDtK1BxNb5em
+            NGROK_AUTHTOKEN: YOUR_AUTH_TOKEN  # Replace with your actual ngrok authtoken
         command:                                                            
             - "start"                                                         
             - "--all"
